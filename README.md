@@ -225,6 +225,8 @@ Run one browser suite at a time (they share the test ports 3163 and 5691).
   RGB Gamer, the Typewriter, the Midnight Mech, the desk round a setup, the spawn, the floor past the desk's edge).
 - `node tests/economy.mjs [minutes] [presses a second]`: the pacing above.
 - `node tests/covers.mjs`, `node tests/setup-page.mjs`: the store covers and `bloxity-setup.html`.
+- `node tests/live-smoke.mjs [url] [portrait]`: opens the hosted game (prod by default), waits for it to join, fails on any console
+  error or failed request, and saves a screenshot.
 
 ## Deploying
 
@@ -233,5 +235,14 @@ Bloxity stage as well once the repo has `LEGION_DEPLOY_TOKEN_STAGE`. A manual ru
 or prod). The platforms are separate jobs of one matrix (`fail-fast: false`); a staging job only ever reads the stage token. The room
 size (16) goes to the deploy as `roomSize`. Secrets: `LEGION_DEPLOY_TOKEN` (hosting.bloxity.io) and, for stage,
 `LEGION_DEPLOY_TOKEN_STAGE` (hosting.stage.bloxity.io; see docs.bloxity.io > Environments > Getting your game onto stage). After the
-first run, make the GHCR package `keystomp-server` public. `bloxity-setup.html` has every field of the Create New Game form and the
-hosting steps.
+first run, make the GHCR package `keystomp-server` public (from a public repo it already is). `bloxity-setup.html` has every field of
+the Create New Game form and the hosting steps.
+
+## Hosting
+
+Live at **https://keystomp.play.bloxity.io** (first deployed on 17 November 2026). The repository is `asivixlp44-cmyk/keystomp`; every
+push to `main` runs `.github/workflows/deploy.yml`, which builds the server image, rolls it out on Legion and uploads the client (it
+needs the `LEGION_DEPLOY_TOKEN` secret). It was pushed to `LEGiON-Platforms/keystomp` first, but that organisation has not run GitHub
+Actions since 30 October 2026, so it never deployed from there. After the first deploy, `node tests/live-smoke.mjs` (and
+`node tests/live-smoke.mjs https://keystomp.play.bloxity.io/ portrait`) joined the live game on a desktop and a portrait phone with no
+errors, and the server's `/health` reported its database connected.
